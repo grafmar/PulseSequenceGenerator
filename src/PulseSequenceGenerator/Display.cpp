@@ -22,7 +22,8 @@ Display::~Display() {
 }
 
 void Display::init() {
-  m_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+  //m_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+  m_display.begin(SH1106_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
   // Show image buffer on the display hardware. Since the buffer is intialized with a splashscreen
   // internally, this will display the splashscreen.
   m_display.display();
