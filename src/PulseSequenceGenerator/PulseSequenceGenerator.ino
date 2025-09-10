@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <TimerOne.h>
 
 #include "PulseSequenceData.h"
 #include "Statemachine.h"
@@ -18,6 +19,7 @@ Display display(pulseSequenceData, statemachine);
 uint8_t outputDefinition = 0x00;
 uint16_t stepCounter      = 0;
 uint32_t lastStepTime;
+volatile uint32_t stepDurationMs = 1000;
 
 uint8_t xPos = 64;
 uint8_t yPos = 32;
@@ -34,12 +36,12 @@ void setup() {
   display.drawScreen();
   
   lastStepTime = millis();
+
+  Timer1.initialize(1000); // 1ms timer
+  Timer1.attachInterrupt(evaluateOutputs); // evaluateOutputs to run every 1 milliseconds
 }
 
 void loop() {
-  uint32_t stepDurationMs;
-  uint32_t now = millis();
-  
   switch (pulseSequenceData.m_selectedStepFactor) {
     case PulseSequenceData::SEC:
       stepDurationMs = pulseSequenceData.m_stepDuration * PulseSequenceData::STEP_FACTOR_SEC;
@@ -52,7 +54,17 @@ void loop() {
       stepDurationMs = pulseSequenceData.m_stepDuration * PulseSequenceData::STEP_FACTOR_HOUR;
       break;
   }
-  
+    
+  buttonHandler.runFilterButtons();
+  statemachine.setButtonState(buttonHandler.getState());
+  statemachine.run();
+  if (statemachine.isDataChanged()) {
+    display.drawScreen();
+  }
+}
+
+void evaluateOutputs() {
+  uint32_t now = millis();
   if (now - lastStepTime >= stepDurationMs) {
     lastStepTime += stepDurationMs;
     stepCounter = (stepCounter + 1) % pulseSequenceData.m_period;
@@ -60,13 +72,6 @@ void loop() {
       pulseSequenceData.m_runs++;
     }
     updateOutputs();
-  }
-  
-  buttonHandler.runFilterButtons();
-  statemachine.setButtonState(buttonHandler.getState());
-  statemachine.run();
-  if (statemachine.isDataChanged()) {
-    display.drawScreen();
   }
 }
 
