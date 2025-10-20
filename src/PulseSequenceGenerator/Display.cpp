@@ -42,7 +42,7 @@ void Display::drawScreen() {
 }
 
 void Display::drawSettings() {
-  String triggerTypeString[] = {"P","H","L"};  // Strings for: PERIOD, HIGH_EDGE, LOW_EDGE
+  String triggerTypeString[] = {"P","H","L"};  // Strings for: PERIOD (CONTINUOUS), HIGH_EDGE, LOW_EDGE
   String stepFactorString[] = {"s","m","h"};  // Strings for: SEC, MIN, HOUR
   char tempString[30];
     
@@ -56,7 +56,7 @@ void Display::drawSettings() {
 
   m_display.setCursor(9*CHAR_WIDTH, 0*CHAR_HEIGHT);
   if (m_pulseSequenceData.m_triggerType == PulseSequenceData::PERIOD) {
-    m_display.print("P");
+    m_display.print("C");
   } else if (m_pulseSequenceData.m_triggerType == PulseSequenceData::HIGH_EDGE) {
     m_display.print("H");
   } else {
