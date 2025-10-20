@@ -239,7 +239,7 @@ void Statemachine::decrementElement() {
     }
   
   } else if (m_selected == ElementTrigger) {
-    if (m_pulseSequenceData.m_triggerType > PulseSequenceData::PERIOD) {
+    if (m_pulseSequenceData.m_triggerType > PulseSequenceData::CONTINUOUS) {
       decrementEnum(m_pulseSequenceData.m_triggerType);
     }
   

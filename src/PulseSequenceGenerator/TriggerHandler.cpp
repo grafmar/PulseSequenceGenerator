@@ -9,7 +9,6 @@ void TriggerHandler::init(void) {
   pinMode(PIN_EXT_TRIGGER, INPUT_PULLUP);
 }
 
-
 TriggerHandler::TriggerEvent TriggerHandler::activeTriggerState() {
   int trigState = digitalRead(PIN_EXT_TRIGGER);
   TriggerEvent triggerState = TriggerEvent_Invalid;
