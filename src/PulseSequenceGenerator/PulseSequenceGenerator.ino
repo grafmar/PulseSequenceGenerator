@@ -8,27 +8,28 @@
 #include "PulseSequenceData.h"
 #include "Statemachine.h"
 #include "ButtonHandler.h"
+#include "TriggerHandler.h"
 #include "Display.h"
 
 PulseSequenceData pulseSequenceData;
 ButtonHandler buttonHandler;
 Statemachine statemachine(pulseSequenceData);
 Display display(pulseSequenceData, statemachine);
+TriggerHandler triggerHandler;
 
 
-uint8_t outputDefinition = 0x00;
-uint16_t stepCounter      = 0;
+uint8_t outputDefinition = B11110000;
+uint16_t stepCounter = 0;
 uint32_t lastStepTime;
 volatile uint32_t stepDurationMs = 1000;
 
-uint8_t xPos = 64;
-uint8_t yPos = 32;
-bool fill = false;
+bool goOnce = false;
 
 void setup() {
   DDRD = B11111111;   // set PORTD (digital 7~0) to outputs
-  PORTD = B00000000;  // initialize output levels to LOW
+  PORTD = outputDefinition;  // initialize output levels to LOW
   buttonHandler.init();
+  triggerHandler.init();
   
   // Serial.begin(9600);
 
@@ -64,14 +65,25 @@ void loop() {
 }
 
 void evaluateOutputs() {
-  uint32_t now = millis();
-  if (now - lastStepTime >= stepDurationMs) {
-    lastStepTime += stepDurationMs;
-    stepCounter = (stepCounter + 1) % pulseSequenceData.m_period;
-    if ((stepCounter == 0) && (pulseSequenceData.m_runs < 99999UL)) {
-      pulseSequenceData.m_runs++;
+  int currentTrigger = triggerHandler.activeTriggerState();
+  if ((pulseSequenceData.m_triggerType == PulseSequenceData::PERIOD) || ((pulseSequenceData.m_triggerType == PulseSequenceData::HIGH_EDGE) && (currentTrigger == TriggerHandler::TriggerEvent_HighEdge)) || ((pulseSequenceData.m_triggerType == PulseSequenceData::LOW_EDGE) && (currentTrigger == TriggerHandler::TriggerEvent_LowEdge))) {
+    if (!goOnce && (pulseSequenceData.m_triggerType != PulseSequenceData::PERIOD)) {
+      lastStepTime = millis();
     }
-    updateOutputs();
+    goOnce = true;
+  }
+
+  if((goOnce == true) ) {
+    uint32_t now = millis();
+    if (now - lastStepTime >= stepDurationMs) {
+      lastStepTime += stepDurationMs;
+      stepCounter = (stepCounter + 1) % pulseSequenceData.m_period;
+      if ((stepCounter == 0) && (pulseSequenceData.m_runs < 99999UL)) {
+        pulseSequenceData.m_runs++;
+        goOnce = false;
+      }
+     updateOutputs();
+    }
   }
 }
 
