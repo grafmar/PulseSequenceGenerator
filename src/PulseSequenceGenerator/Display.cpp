@@ -42,7 +42,7 @@ void Display::drawScreen() {
 }
 
 void Display::drawSettings() {
-  String triggerTypeString[] = {"P","H","L"};  // Strings for: PERIOD (CONTINUOUS), HIGH_EDGE, LOW_EDGE
+  String triggerTypeString[] = {"C","H","L"}; // Strings for: CONTINUOUS, HIGH_EDGE, LOW_EDGE
   String stepFactorString[] = {"s","m","h"};  // Strings for: SEC, MIN, HOUR
   char tempString[30];
     
@@ -55,26 +55,14 @@ void Display::drawSettings() {
   m_display.println("Run:");      // Run:00000  |
 
   m_display.setCursor(9*CHAR_WIDTH, 0*CHAR_HEIGHT);
-  if (m_pulseSequenceData.m_triggerType == PulseSequenceData::PERIOD) {
-    m_display.print("C");
-  } else if (m_pulseSequenceData.m_triggerType == PulseSequenceData::HIGH_EDGE) {
-    m_display.print("H");
-  } else {
-    m_display.print("L");
-  }
+  m_display.print(triggerTypeString[m_pulseSequenceData.m_triggerType]); // Use strings for trigger type
   
   m_display.setCursor(3*CHAR_WIDTH, 1*CHAR_HEIGHT);
   sprintf(tempString, "%03d.", m_pulseSequenceData.m_stepDuration / 100);
   m_display.print(tempString);
   sprintf(tempString, "%02d", m_pulseSequenceData.m_stepDuration % 100);
   m_display.print(tempString);
-  if (m_pulseSequenceData.m_selectedStepFactor == PulseSequenceData::SEC) {
-    m_display.print("s");
-  } else if (m_pulseSequenceData.m_selectedStepFactor == PulseSequenceData::MIN) {
-    m_display.print("m");
-  } else {
-    m_display.print("h");
-  }
+  m_display.print(stepFactorString[m_pulseSequenceData.m_selectedStepFactor]); // Use strings for step factor
 
   m_display.setCursor(5*CHAR_WIDTH, 2*CHAR_HEIGHT);
   sprintf(tempString, "%04d", m_pulseSequenceData.m_period);
@@ -217,7 +205,7 @@ void Display::drawGraph() {
 
 uint16_t Display::calcPeriod() {
   uint16_t period = 0;
-  if (m_pulseSequenceData.m_triggerType == PulseSequenceData::PERIOD) {
+  if (m_pulseSequenceData.m_triggerType == PulseSequenceData::CONTINUOUS) {
     period = m_pulseSequenceData.m_period;
   } else {
     for (uint8_t ch = 0 ; ch < PulseSequenceData::CHANNELS ; ch++) {

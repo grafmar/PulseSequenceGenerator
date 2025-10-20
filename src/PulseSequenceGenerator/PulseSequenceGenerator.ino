@@ -66,8 +66,8 @@ void loop() {
 
 void evaluateOutputs() {
   int currentTrigger = triggerHandler.activeTriggerState();
-  if ((pulseSequenceData.m_triggerType == PulseSequenceData::PERIOD) || ((pulseSequenceData.m_triggerType == PulseSequenceData::HIGH_EDGE) && (currentTrigger == TriggerHandler::TriggerEvent_HighEdge)) || ((pulseSequenceData.m_triggerType == PulseSequenceData::LOW_EDGE) && (currentTrigger == TriggerHandler::TriggerEvent_LowEdge))) {
-    if (!goOnce && (pulseSequenceData.m_triggerType != PulseSequenceData::PERIOD)) {
+  if ((pulseSequenceData.m_triggerType == PulseSequenceData::CONTINUOUS) || ((pulseSequenceData.m_triggerType == PulseSequenceData::HIGH_EDGE) && (currentTrigger == TriggerHandler::TriggerEvent_HighEdge)) || ((pulseSequenceData.m_triggerType == PulseSequenceData::LOW_EDGE) && (currentTrigger == TriggerHandler::TriggerEvent_LowEdge))) {
+    if (!goOnce && (pulseSequenceData.m_triggerType != PulseSequenceData::CONTINUOUS)) {
       lastStepTime = millis();
     }
     goOnce = true;

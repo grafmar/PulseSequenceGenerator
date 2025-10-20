@@ -17,7 +17,7 @@ public:
   };
   
   enum TriggerType {
-    PERIOD = 0,
+    CONTINUOUS = 0,
     HIGH_EDGE,
     LOW_EDGE
   };
@@ -34,7 +34,7 @@ public:
   static const uint16_t   MAX_PERIOD        = 9999;
 
   //// Instance members
-  TriggerType m_triggerType = PERIOD;
+  TriggerType m_triggerType = CONTINUOUS;
   uint32_t m_stepDuration     = 100; // 1s : 001.00 -> 00100
   SelectedStepFactor m_selectedStepFactor = SEC;
   uint16_t m_period           = 10;
