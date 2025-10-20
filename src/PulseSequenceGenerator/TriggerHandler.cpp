@@ -14,9 +14,9 @@ TriggerHandler::TriggerEvent TriggerHandler::activeTriggerState() {
   TriggerEvent triggerState = TriggerEvent_Invalid;
 
   if (trigState > m_trigStateOld) {
-    triggerState = TriggerEvent_HighEdge;
-  } else if (trigState < m_trigStateOld) {
     triggerState = TriggerEvent_LowEdge;
+  } else if (trigState < m_trigStateOld) {
+    triggerState = TriggerEvent_HighEdge;
   }
   m_trigStateOld = trigState;
 
